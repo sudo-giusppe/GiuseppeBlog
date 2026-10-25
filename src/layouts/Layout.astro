@@ -1,68 +1,117 @@
 ---
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import "../styles/global.css";
 
 interface Props {
 	title: string;
+	description?: string;
 }
 
-const { title } = Astro.props;
+const {
+	title,
+	description = "Notas de matemática, sistemas computacionales y código, por Giuseppe Barraza.",
+} = Astro.props;
+
+const fullTitle =
+	title === "Inicio"
+		? "Giuseppe Barraza — notas de matemática y sistemas"
+		: `${title} · Giuseppe Barraza`;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="es" class="no-js">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="description" content="Giuseppe's thoughts" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<script is:inline>
+			(() => {
+				const root = document.documentElement;
+				root.classList.remove("no-js");
+				root.classList.add("js");
+				let saved = null;
+				try {
+					saved = localStorage.getItem("theme");
+				} catch {
+					/* almacenamiento no disponible */
+				}
+				const dark = saved
+					? saved === "dark"
+					: window.matchMedia("(prefers-color-scheme: dark)").matches;
+				root.dataset.theme = dark ? "dark" : "light";
+			})();
+		</script>
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="description" content={description} />
 		<meta name="generator" content={Astro.generator} />
-		<title>{title}</title>
-		<link href="https://fonts.googleapis.com/css2?family=Fira+Code&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+		<meta property="og:title" content={fullTitle} />
+		<meta property="og:description" content={description} />
+		<meta property="og:type" content="website" />
+		<meta property="og:locale" content="es_CL" />
+		<meta name="twitter:card" content="summary" />
+		<meta
+			name="theme-color"
+			content="#f5f2ea"
+			media="(prefers-color-scheme: light)"
+		/>
+		<meta
+			name="theme-color"
+			content="#121310"
+			media="(prefers-color-scheme: dark)"
+		/>
+		<link
+			rel="preload"
+			href="/fonts/source-serif-4-latin-normal.woff2"
+			as="font"
+			type="font/woff2"
+			crossorigin
+		/>
+		<link
+			rel="preload"
+			href="/fonts/ibm-plex-mono-400.woff2"
+			as="font"
+			type="font/woff2"
+			crossorigin
+		/>
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<title>{fullTitle}</title>
 	</head>
 	<body>
+		<a class="skip-link" href="#main">Saltar al contenido</a>
+		<div class="progress" aria-hidden="true">
+			<span class="progress__bar"></span>
+		</div>
 		<Header />
-		<main>
-			<slot />
+		<main id="main" class="site-main">
+			<div class="wrap">
+				<slot />
+			</div>
 		</main>
 		<Footer />
+
+		<script>
+			import { animate, scroll, stagger } from "motion";
+
+			const reduce = window.matchMedia(
+				"(prefers-reduced-motion: reduce)",
+			).matches;
+
+			const bar = document.querySelector<HTMLElement>(".progress__bar");
+			if (bar) {
+				scroll(animate(bar, { scaleX: [0, 1] }, { ease: "linear" }));
+			}
+
+			const reveal = [...document.querySelectorAll<HTMLElement>("[data-reveal]")];
+			if (!reduce && reveal.length > 0) {
+				animate(
+					reveal,
+					{ opacity: [0.72, 1], y: [8, 0] },
+					{
+						duration: 0.6,
+						delay: stagger(0.06),
+						ease: [0.22, 1, 0.36, 1],
+					},
+				);
+			}
+		</script>
 	</body>
 </html>
-<style is:global>
-	:root {
-		--accent: 29, 53, 87;
-		--accent-light: 168, 218, 220;
-		--accent-dark: 69, 123, 157;
-		--background: 241, 250, 238;
-		--text: 29, 53, 87;
-	}
-	html {
-		font-family: 'Roboto', sans-serif;
-		background-color: rgb(var(--background));
-		color: rgb(var(--text));
-	}
-	body {
-		margin: 0;
-		padding: 0;
-		display: flex;
-		flex-direction: column;
-		min-height: 100vh;
-	}
-	main {
-		flex: 1;
-		padding: 2rem;
-		width: 100%;
-		max-width: 800px;
-		margin: 0 auto;
-	}
-	h1, h2, h3, h4, h5, h6 {
-		font-family: 'Fira Code', monospace;
-	}
-	code {
-		font-family: 'Fira Code', monospace;
-		background-color: rgba(var(--accent-light), 0.2);
-		padding: 0.2em 0.4em;
-		border-radius: 4px;
-	}
-</style>
-

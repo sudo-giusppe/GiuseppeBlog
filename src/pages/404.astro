@@ -1,0 +1,26 @@
+---
+import Layout from "../layouts/Layout.astro";
+import AntField from "../components/AntField.astro";
+---
+
+<Layout title="Página no encontrada" description="Esa página no existe.">
+	<header class="page-head" data-reveal>
+		<p class="kicker">error 404</p>
+		<h1 class="page-title">Esa página no existe.</h1>
+		<p class="lede">
+			Puede que el enlace esté roto o que la nota se haya movido. El archivo
+			sigue disponible.
+		</p>
+	</header>
+
+	<div class="home-more" data-reveal>
+		<a class="arrow-link" href="/blog">
+			Archivo <span class="arrow" aria-hidden="true">→</span>
+		</a>
+		<a class="arrow-link" href="/">
+			Inicio <span class="arrow" aria-hidden="true">→</span>
+		</a>
+	</div>
+
+	<AntField variant="turmite2" />
+</Layout>

@@ -1,0 +1,90 @@
+---
+interface Tab {
+	value: string;
+	label: string;
+	count: number;
+}
+
+interface Props {
+	items: Tab[];
+	total: number;
+}
+
+const { items, total } = Astro.props;
+---
+
+<div class="tabs" data-tabs>
+	<div class="tabs-list" role="group" aria-label="Filtrar notas">
+		{
+			items.map((item, index) => (
+				<button
+					type="button"
+					class:list={["tab", index === 0 && "is-active"]}
+					aria-pressed={index === 0 ? "true" : "false"}
+					aria-controls="archive-list"
+					data-filter={item.value}
+				>
+					{item.label}
+					<span class="tab-count">
+						{String(item.count).padStart(2, "0")}
+					</span>
+				</button>
+			))
+		}
+	</div>
+	<p class="tabs-status" data-tabs-status aria-live="polite">
+		{String(total).padStart(2, "0")} notas
+	</p>
+</div>
+
+<script>
+	import { animate, stagger } from "motion";
+
+	const root = document.querySelector<HTMLElement>("[data-tabs]");
+	const status = root?.querySelector<HTMLElement>("[data-tabs-status]");
+
+	if (root && status) {
+		const buttons = [...root.querySelectorAll<HTMLButtonElement>(".tab")];
+		const rows = [...document.querySelectorAll<HTMLElement>("[data-post]")];
+		const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+		const applyFilter = (value: string) => {
+			let visible = 0;
+
+			rows.forEach((row) => {
+				const show = value === "all" || row.dataset.category === value;
+				row.hidden = !show;
+				if (show) visible++;
+			});
+
+			status.textContent = `${String(visible).padStart(2, "0")} ${
+				visible === 1 ? "nota" : "notas"
+			}`;
+
+			if (!reduce) {
+				const shown = rows.filter((row) => !row.hidden);
+				animate(
+					shown,
+					{ opacity: [0, 1], y: [5, 0] },
+					{
+						duration: 0.32,
+						delay: stagger(0.035),
+						ease: [0.22, 1, 0.36, 1],
+					},
+				);
+			}
+		};
+
+		buttons.forEach((button) => {
+			button.addEventListener("click", () => {
+				buttons.forEach((other) => {
+					const selected = other === button;
+					other.classList.toggle("is-active", selected);
+					other.setAttribute("aria-pressed", String(selected));
+				});
+
+				applyFilter(button.dataset.filter ?? "all");
+			});
+		});
+	}
+</script>

@@ -1,30 +1,42 @@
 ---
----
-<header>
-	<nav>
-		<a href="/">Home</a>
-		<a href="/blog">Blog</a>
-		<a href="/about">About</a>
-	</nav>
-</header>
+import ThemeToggle from "./ThemeToggle.astro";
 
-<style>
-	header {
-		background-color: rgb(var(--accent));
-		padding: 1rem;
-	}
-	nav {
-		display: flex;
-		justify-content: center;
-		gap: 1rem;
-	}
-	a {
-		color: rgb(var(--background));
-		text-decoration: none;
-		font-weight: bold;
-		transition: color 0.3s ease;
-	}
-	a:hover {
-		color: rgb(var(--accent-light));
-	}
-</style>
+const path = Astro.url.pathname.replace(/\/+$/, "") || "/";
+
+const links = [
+	{ href: "/", label: "inicio" },
+	{ href: "/blog", label: "archivo" },
+	{ href: "/about", label: "acerca" },
+	{ href: "/forum", label: "discusión" },
+];
+
+const isActive = (href: string) =>
+	href === "/" ? path === "/" : path === href || path.startsWith(`${href}/`);
+---
+
+<header class="site-header">
+	<div class="wrap header-inner">
+		<a class="brand" href="/" aria-label="Inicio — Giuseppe Barraza">
+			<span class="brand-name">
+				<span class="brand-mark" aria-hidden="true"></span>
+				giuseppe barraza
+			</span>
+			<span class="brand-sub">notas de matemática y sistemas</span>
+		</a>
+
+		<nav class="nav" aria-label="Principal">
+			{
+				links.map((link) => (
+					<a
+						href={link.href}
+						class:list={["nav-link", isActive(link.href) && "is-active"]}
+						aria-current={isActive(link.href) ? "page" : undefined}
+					>
+						{link.label}
+					</a>
+				))
+			}
+			<ThemeToggle />
+		</nav>
+	</div>
+</header>

@@ -1,93 +1,54 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import BlogPost from "../components/BlogPost.astro";
+import AntField from "../components/AntField.astro";
+import SmoothTabs from "../components/SmoothTabs.astro";
+import { categories, countFor, posts } from "../data/posts";
 
-const posts = [
-    {
-        title: "Representación numérica",
-        date: "2024-10-21",
-        url: "/blog/iic1001/representacion-numerica",
-        category: "IIC-1001",
-    },
-    {
-        title: "The Golden Ratio in Nature",
-        date: "2023-05-15",
-        url: "/blog/golden-ratio",
-    },
-    {
-        title: "Understanding Euler's Identity",
-        date: "2023-05-10",
-        url: "/blog/eulers-identity",
-    },
-    {
-        title: "The Beauty of Fractals",
-        date: "2023-05-05",
-        url: "/blog/fractals",
-    },
-];
+const tabs = categories.map((category) => ({
+	...category,
+	count: countFor(category.value),
+}));
 ---
 
-<Layout title="Math Blog - Articles">
-    <h1>Math Blog Articles</h1>
-    <div class="blog-categories">
-        <h2>IIC-1001 Algoritmos y sistemas computacionales</h2>
-        <div class="blog-posts">
-            {
-                posts
-                    .filter((post) => post.category === "IIC-1001")
-                    .map((post) => <BlogPost {...post} />)
-            }
-        </div>
-        <h2>Other Articles</h2>
-        <div class="blog-posts">
-            {
-                posts
-                    .filter((post) => post.category !== "IIC-1001")
-                    .map((post) => <BlogPost {...post} />)
-            }
-        </div>
-    </div>
-    <div class="forum-section">
-        <h2>Foro de discusión y dudas</h2>
-        <p>
-            ¿Tienes preguntas sobre la materia o los ejercicios? ¡Participa en
-            nuestro foro de discusión!
-        </p>
-        <a href="/forum" class="forum-button">Ir al foro</a>
-    </div>
-</Layout>
+<Layout
+	title="Archivo"
+	description="Archivo de notas sobre matemática, sistemas computacionales y código."
+>
+	<header class="page-head" data-reveal>
+		<p class="kicker">archivo</p>
+		<h1 class="page-title">Archivo</h1>
+		<p class="lede">
+			Todas las notas, en orden inverso. La lista se puede filtrar por tema.
+		</p>
+	</header>
 
-<style>
-    h1,
-    h2 {
-        color: rgb(var(--accent));
-    }
-    .blog-categories {
-        margin-bottom: 2rem;
-    }
-    .blog-posts {
-        display: grid;
-        gap: 1rem;
-        margin-bottom: 2rem;
-    }
-    .forum-section {
-        background-color: rgba(var(--accent-light), 0.2);
-        padding: 1rem;
-        border-radius: 8px;
-        margin-top: 2rem;
-    }
-    .forum-button {
-        display: inline-block;
-        background-color: rgb(var(--accent));
-        color: rgb(var(--background));
-        padding: 0.5rem 1rem;
-        border-radius: 4px;
-        text-decoration: none;
-        font-weight: bold;
-        margin-top: 1rem;
-        transition: background-color 0.3s ease;
-    }
-    .forum-button:hover {
-        background-color: rgb(var(--accent-dark));
-    }
-</style>
+	<div data-reveal>
+		<SmoothTabs items={tabs} total={posts.length} />
+	</div>
+
+	<ul class="archive" id="archive-list">
+		{
+			posts.map((post) => (
+				<li data-post data-category={post.category}>
+					<a class="archive-row" href={post.href}>
+						<time class="archive-date" datetime={post.date}>
+							{post.date}
+						</time>
+						<span class="archive-title">{post.title}</span>
+						<span class="archive-cat">{post.category}</span>
+						<span class="archive-arrow" aria-hidden="true">
+							→
+						</span>
+					</a>
+				</li>
+			))
+		}
+	</ul>
+
+	<p class="forum-note">
+		¿Dudas sobre autómatas o algoritmos evolutivos? La sala de
+		<a href="/forum">discusión</a> sigue abierta.
+	</p>
+
+	<AntField variant="mirror" />
+</Layout>

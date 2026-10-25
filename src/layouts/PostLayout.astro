@@ -1,0 +1,62 @@
+---
+import Layout from "./Layout.astro";
+import AntField from "../components/AntField.astro";
+import { adjacent, type Post } from "../data/posts";
+
+interface Props {
+	post: Post;
+}
+
+const { post } = Astro.props;
+const { previous, next } = adjacent(post.href);
+---
+
+<Layout title={post.title} description={post.description}>
+	<article class="article" lang={post.lang}>
+		<header class="article-head" data-reveal>
+			<nav class="breadcrumb" aria-label="Ruta">
+				<a href="/blog">archivo</a>
+				<span class="slash" aria-hidden="true">/</span>
+				<span>{post.category}</span>
+			</nav>
+			<h1 class="article-title">{post.title}</h1>
+			<p class="article-deck">{post.description}</p>
+			<p class="article-meta">
+				<time datetime={post.date}>{post.date}</time>
+				<span class="sep" aria-hidden="true">·</span>
+				<span>{post.minutes} min de lectura</span>
+			</p>
+		</header>
+
+		<div class="prose" data-reveal>
+			<slot />
+		</div>
+
+		<footer class="article-foot">
+			<span class="end-mark" aria-hidden="true">∎</span>
+
+			<nav class="pager" aria-label="Otras notas">
+				{
+					previous && (
+						<a class="pager-link" href={previous.href}>
+							<span class="pager-label">← anterior</span>
+							<span class="pager-title">{previous.title}</span>
+						</a>
+					)
+				}
+				{
+					next && (
+						<a class="pager-link" href={next.href}>
+							<span class="pager-label">siguiente →</span>
+							<span class="pager-title">{next.title}</span>
+						</a>
+					)
+				}
+			</nav>
+
+			<a class="backlink" href="/blog">← volver al archivo</a>
+		</footer>
+
+		<AntField variant={post.field} intensity="quiet" />
+	</article>
+</Layout>

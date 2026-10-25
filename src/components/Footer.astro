@@ -1,16 +1,14 @@
 ---
-const currentYear = new Date().getFullYear();
+const year = new Date().getFullYear();
 ---
-<footer>
-	<p>&copy; {currentYear} Giuseppe's Lair. All rights reserved.</p>
+<footer class="site-footer">
+	<div class="wrap footer-inner">
+		<p>© {year} José Pedro Barraza</p>
+		<nav class="footer-links" aria-label="Secundario">
+			<a href="/blog">archivo</a>
+			<a href="/about">acerca</a>
+			<a href="/forum">discusión</a>
+		</nav>
+		<p class="footer-note">Hecho con Astro y Motion. Sin rastreadores.</p>
+	</div>
 </footer>
-
-<style>
-	footer {
-		background-color: rgb(var(--accent));
-		color: rgb(var(--background));
-		text-align: center;
-		padding: 1rem;
-		margin-top: 2rem;
-	}
-</style>

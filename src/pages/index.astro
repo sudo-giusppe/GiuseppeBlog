@@ -1,63 +1,75 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import Layout from "../layouts/Layout.astro";
+import AntField from "../components/AntField.astro";
+import Plot from "../components/Plot.astro";
+import MagneticLink from "../components/MagneticLink.astro";
+import { posts } from "../data/posts";
+
+const latest = posts.slice(0, 3);
 ---
 
-<Layout title="Giuseppe's Lair - Home">
-	<h1>Welcome to <span class="text-gradient">Giuseppe's Lair</span></h1>
-	<p>Explore my thoughts on mathematics, coding, and more.</p>
-	<div class="cta-container">
-		<a href="/blog" class="cta-button">Read My Blog</a>
+<Layout title="Inicio">
+	<section class="intro" data-reveal>
+		<p class="kicker">reciente</p>
+		<h1 class="intro-title">Notas recientes</h1>
+		<p class="lede">
+			Matemática, sistemas computacionales y código. Escribo para ordenar lo
+			que aprendo y dejar registro de lo que no quiero volver a deducir.
+		</p>
+	</section>
+
+	<div data-reveal>
+		<Plot />
 	</div>
-	<div class="math-visual">
-		<svg width="200" height="200" viewBox="0 0 200 200">
-			<circle cx="100" cy="100" r="80" fill="none" stroke="rgb(var(--accent))" stroke-width="2" />
-			<path d="M100 20 L100 180 M20 100 L180 100" stroke="rgb(var(--accent))" stroke-width="2" />
-			<path d="M100 20 Q180 100 100 180" fill="none" stroke="rgb(var(--accent-dark))" stroke-width="2" />
-			<path d="M20 100 Q100 20 180 100" fill="none" stroke="rgb(var(--accent-light))" stroke-width="2" />
-		</svg>
+
+	<div class="section-head" data-reveal>
+		<h2>últimas entradas</h2>
 	</div>
+
+	<ol class="entries">
+		{
+			latest.map((post) => (
+				<li data-reveal>
+					<article class="entry">
+						<a class="entry-link" href={post.href}>
+							<div class="entry-meta">
+								<time datetime={post.date}>{post.date}</time>
+								<span class="sep" aria-hidden="true">·</span>
+								<span>{post.category}</span>
+								<span class="sep" aria-hidden="true">·</span>
+								<span>{post.minutes} min</span>
+							</div>
+							<h2 class="entry-title">
+								<span>{post.title}</span>
+								<span class="entry-arrow" aria-hidden="true">→</span>
+							</h2>
+							<p class="entry-desc">{post.description}</p>
+						</a>
+					</article>
+				</li>
+			))
+		}
+	</ol>
+
+	<div class="home-more" data-reveal>
+		<MagneticLink href="/blog">
+			Archivo completo <span class="arrow" aria-hidden="true">→</span>
+		</MagneticLink>
+		<a class="arrow-link" href="/about">
+			Acerca de mí <span class="arrow" aria-hidden="true">→</span>
+		</a>
+		<a class="arrow-link" href="/forum">
+			Discusión <span class="arrow" aria-hidden="true">→</span>
+		</a>
+	</div>
+
+	<p class="now-line" data-reveal>
+		<span class="now-label">ahora</span>
+		<span>
+			Simulando la <a href="/blog/langtons-ant">hormiga de Langton</a> y
+			ajustando un algoritmo genético.
+		</span>
+	</p>
+
+	<AntField variant="classic" />
 </Layout>
-
-<style>
-	h1 {
-		font-size: 3rem;
-		font-weight: 700;
-		line-height: 1;
-		text-align: center;
-		margin-bottom: 1em;
-	}
-	.text-gradient {
-		background-image: linear-gradient(45deg, rgb(var(--accent)), rgb(var(--accent-light)));
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-		background-size: 400%;
-		background-position: 0%;
-	}
-	p {
-		text-align: center;
-		margin-bottom: 2rem;
-	}
-	.cta-container {
-		display: flex;
-		justify-content: center;
-		margin-bottom: 2rem;
-	}
-	.cta-button {
-		background-color: rgb(var(--accent));
-		color: rgb(var(--background));
-		padding: 0.5rem 1rem;
-		border-radius: 4px;
-		text-decoration: none;
-		font-weight: bold;
-		transition: background-color 0.3s ease;
-	}
-	.cta-button:hover {
-		background-color: rgb(var(--accent-dark));
-	}
-	.math-visual {
-		display: flex;
-		justify-content: center;
-		margin-top: 2rem;
-	}
-</style>
-

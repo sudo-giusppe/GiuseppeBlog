@@ -1,0 +1,50 @@
+---
+interface Props {
+	href: string;
+	class?: string;
+}
+
+const { href, class: className = "" } = Astro.props;
+---
+
+<a href={href} class:list={["arrow-link", className]} data-magnetic>
+	<slot />
+</a>
+
+<script>
+	import { animate } from "motion";
+
+	const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+	if (!reduce) {
+		document.querySelectorAll<HTMLElement>("[data-magnetic]").forEach((el) => {
+			let inside = false;
+
+			el.addEventListener("pointerenter", () => {
+				inside = true;
+			});
+
+			el.addEventListener("pointermove", (event) => {
+				if (!inside) return;
+				const rect = el.getBoundingClientRect();
+				const x = (event.clientX - (rect.left + rect.width / 2)) * 0.13;
+				const y = (event.clientY - (rect.top + rect.height / 2)) * 0.2;
+
+				animate(
+					el,
+					{ x, y },
+					{ type: "spring", stiffness: 320, damping: 24, mass: 0.6 },
+				);
+			});
+
+			el.addEventListener("pointerleave", () => {
+				inside = false;
+				animate(
+					el,
+					{ x: 0, y: 0 },
+					{ type: "spring", stiffness: 280, damping: 26 },
+				);
+			});
+		});
+	}
+</script>
